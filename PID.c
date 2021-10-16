@@ -66,14 +66,14 @@ BOOL inputPID(PID_t* pid, float val)
 	
 }
 
-uint32_t handlePID(PID_t* pid)
+uint32_t handlePID(PID_t* pid, int* diff)
 {
 	if (!pid->readyFLG)
 	{
 		return pid->currDAC;  
 	}
 
-	float error = pid->currVal;
+	int error = (int)pid->currVal;
 
 	float up = 0;
 	float ud = 0;
@@ -94,6 +94,11 @@ uint32_t handlePID(PID_t* pid)
         else
         {
           up = -error * 70;
+        }
+        
+        if(diff)
+        {
+          *diff = round(up + ui + ud);
         }
         
 	

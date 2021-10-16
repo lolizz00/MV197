@@ -4,7 +4,7 @@
 #include "flash.h"
 #include "pid.h"
 
-
+extern const char version_logo[];
 
 uint8_t USB_Buf[SH_CL_SIZE];
 
@@ -34,7 +34,7 @@ int calc()
    unsigned long int  f1 = g_meas.tim1 * 0xFFFF + TIM1->CNT; 
    
    
-   if(!f2)
+   if(f2 < 10)
    {
      g_meas.noSIG = TRUE;
      return 0;
@@ -79,6 +79,8 @@ void init()
   enableIRQ();
 }
 
+
+
 void checkEndCalibr(int err, int dac)
 {
   static int cnt = 0;
@@ -94,15 +96,11 @@ void checkEndCalibr(int err, int dac)
   
   if(cnt >= 2)
   {
-     flash_data_t fl;
-     
-     fl.dac_val = dac;
-     fl.key0 = FLASH_KEY_0;
-     fl.key1 = FLASH_KEY_1;
-     writeFlash(&fl);
+     writeFLASH_DAC( dac);
      
      writeLED_READY(1);
      
+     printf("Calibration finished!\n\r");
      
      while(1);
   }
@@ -116,7 +114,9 @@ void main(void)
   enableClock();
   init();
   
-
+  for(int i =0; i < 0xFFF;i++);
+  
+  printf(" Software verion: %s\n\r", version_logo);
   
     
   if(checkFlash() != -1) // в есть памяти значение калибровки
@@ -126,15 +126,24 @@ void main(void)
     default_dac = fl.dac_val;
        
     writeDAC(default_dac);
+    
+    printf("Calibration value read successfully.\n\r");
+    
   }
   else // в памяти нет значения калибровки
   {
     g_meas.noFLASH = TRUE;
     writeDAC(DAC_NOINF);
+    printf("Failed to read the calibration value.\n\r");
+    
   }
   
  
   // ожидание сигнала калибровки на вход
+  
+  
+  TIM2->ARR = 0xFFF; // временное значение, для быстрого обнаружения сигнала
+  
   setTimerLED(TRUE);
   do
   {
@@ -142,13 +151,15 @@ void main(void)
   }
   while(g_meas.noSIG);
   
+  TIM2->ARR = 0xFFF1; // вовзвращаем нормальное значение
   
   
   setTimerLED(FALSE);
   writeLED_SIG(1);
   writeLED_READY(0);
 
-  
+  printf("Signal 10MHz detected. Calibration started...\n\r");
+   
   // --- запуск калибровки
   PID_t pid;
   initPID(&pid, DEF_DAC);
@@ -159,17 +170,18 @@ void main(void)
   {
    int err = calc();
    unsigned dac = 0;
+   int diff;
    
    inputPID(&pid, err);
-   dac = handlePID(&pid);
+   dac = handlePID(&pid, &diff);
    writeDAC(dac);
+   
+   writeFLASH_DAC(dac);
    
    checkEndCalibr(err, dac);
    
-   char buff[100] = {0};
-   sprintf(buff, "ERR, DAC, %d %d\n\r", err, dac);
-   USB_SendBuf(buff, strlen(buff));
-   
+   printf("Error, DAC value, DAC shift: %d\t%d\t%d\n\r", err, dac, diff);
+   printf("Value saved to FLASH.\n\r");
   }
 
 }

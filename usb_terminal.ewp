@@ -1611,7 +1611,7 @@
       <archiveVersion>1</archiveVersion>
       <data>
         <prebuild></prebuild>
-        <postbuild></postbuild>
+        <postbuild>H:\MV197\release.bat</postbuild>
       </data>
     </settings>
     <settings>
@@ -2055,6 +2055,9 @@
     <name>Other</name>
     <file>
       <name>$PROJ_DIR$\app\includes.h</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\version.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\write.c</name>

@@ -2220,6 +2220,9 @@
       <name>$PROJ_DIR$\app\includes.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\version.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\write.c</name>
     </file>
   </group>

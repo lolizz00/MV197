@@ -18,6 +18,7 @@ typedef struct
   unsigned key1;
   
 }flash_data_t;
+void writeFLASH_DAC( unsigned dac);
 
 flash_data_t readFlash();
 void writeFlash(flash_data_t*);

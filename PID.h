@@ -40,7 +40,7 @@ typedef struct
 }PID_t;
 
 BOOL inputPID(PID_t* pid, float val);
-uint32_t handlePID(PID_t* pid);
+uint32_t handlePID(PID_t* pid, int* diff);
 void initPID(PID_t* pid, uint32_t currDAC);
 float calcDiff(PID_t* pid, float val);
 float calcIntegr(PID_t* pid, float error, float K, float K1);

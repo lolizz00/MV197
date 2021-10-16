@@ -24,10 +24,12 @@
 
 #include <yfuns.h>
 
+void USB_SendChar(char ch);
+
 _STD_BEGIN
 
 #pragma module_name = "?__write"
-/*
+
 int MyLowLevelPutchar(char x);
 
 size_t __write(int handle, const unsigned char * buffer, size_t size)
@@ -46,10 +48,7 @@ size_t __write(int handle, const unsigned char * buffer, size_t size)
 
   for (; size != 0; --size)
   {
-    if (MyLowLevelPutchar(*buffer++) < 0)
-    {
-      return _LLIO_ERROR;
-    }
+   USB_SendChar(*buffer++);
 
     ++nChars;
   }
@@ -57,18 +56,13 @@ size_t __write(int handle, const unsigned char * buffer, size_t size)
   return nChars;
 
 
-  return _LLIO_ERROR;
+
 
 
 
 }
 
-int MyLowLevelPutchar(char x){
-  
-  UsbCdcWrite(&x, 1);
 
-  return 1;
-  
-}
-*/
+
+
 _STD_END

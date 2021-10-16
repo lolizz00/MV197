@@ -10,7 +10,17 @@ flash_data_t readFlash()
   memcpy(&flash, PARAMS_ADDR , sizeof(flash_data_t));
   return flash;
 }
-         
+       
+void writeFLASH_DAC( unsigned dac)
+{
+     flash_data_t fl;
+     
+     fl.dac_val = dac;
+     fl.key0 = FLASH_KEY_0;
+     fl.key1 = FLASH_KEY_1;
+     writeFlash(&fl);
+}
+
 void writeFlash(flash_data_t* flash)
 {
    FLASH_Unlock();
