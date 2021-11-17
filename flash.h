@@ -8,6 +8,7 @@
 
 #define DEF_DAC   22200
 #define DAC_NOINF 0x7FFF
+//7FFF
 
 typedef struct
 {

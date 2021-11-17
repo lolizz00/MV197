@@ -81,25 +81,21 @@ uint32_t handlePID(PID_t* pid, int* diff)
         
         if (_abs(error) < 2)
 	{
-          up = -error * 1;
+          up = error * 2;
         }
         else if (_abs(error) <= 6)
 	{
-          up = -error * 25;
-        }
-        else if (_abs(error) <= 20)
-	{
-          up = -error * 40;
+          up = error * 30;
         }
         else
         {
-          up = -error * 70;
+           up = error * 50;
         }
         
-        if(diff)
+        /*if(diff)
         {
           *diff = round(up + ui + ud);
-        }
+        }*/
         
 	
 	pid->currDAC += round(up + ui + ud);
